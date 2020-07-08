@@ -96,7 +96,7 @@ function draw() {
             modelStatus.innerHTML = "Loop finished";
           }
         });
-        // add frame count
+
         frameCount += 1;
       }
       // Update frame to show next
