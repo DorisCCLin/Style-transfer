@@ -5,12 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Style Transfer</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
   </head>
   <body>
-    <p id="status">Loading model...</p>
-    <img id="style" width="320" height="240" src="images/style-origin.jpg" />
-    <canvas id="styled" width="320" height="240"></canvas>
-
+    <div class="outer-grid-container">
+      <div class="box header-box">
+        <div class="card-grid-container">
+          <div class="card card-title">Style Transfer</div>
+          <div id="status" class="card card-status loading">Loading Model</div>
+          <div class="card card-button-panel">
+            <button class="button" onclick="onAnimationLoopClick()">
+              Animation Loop
+            </button>
+            <button class="button" onclick="onWebcamLoopClick()">
+              Webcam Loop
+            </button>
+            <button
+              id="play-stop-button"
+              class="button"
+              onclick="onPlayStopToggle()"
+            >
+              Stop
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="loader"></div> -->
+      <div class="box style-box">
+        <div class="card-grid-container">
+          <div class="card card-title">Style</div>
+          <div class="card card-content">
+            <div id="style-image-container">
+              <img
+                id="style-image"
+                width="320"
+                height="240"
+                src="images/style320x220.jpg"
+              />
+            </div>
+          </div>
+          <div class="card card-options">Other Content Options</div>
+        </div>
+      </div>
+      <div class="box content-box">
+        <div class="card-grid-container">
+          <div class="card card-title">Content</div>
+          <div id="p5-canvas-container" class="card card-content flip"></div>
+          <div id="p5-video-container" class="card card-content flip"></div>
+          <div id="content-spinner" class="card card-content spinner"></div>
+          <div class="card card-options">Other Content Options</div>
+        </div>
+      </div>
+      <div class="box output-box">
+        <div class="card-grid-container">
+          <div class="card card-title">Output</div>
+          <div id="stylized-canvas-container" class="card card-content flip">
+            <canvas id="stylized-canvas" width="320" height="240"></canvas>
+          </div>
+          <div id="stylized-spinner" class="card card-content spinner"></div>
+        </div>
+      </div>
+    </div>
     <!-- Load P5.js library -->
     <script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.js"></script>
     <!-- Load @magenta/image library -->
