@@ -12,12 +12,14 @@ const framesPerSecondToDraw = 12;
 const waitTimeBeforeDrawingEachNewFrame = 3;
 const maxFramesInLoop = 3;
 const strength = 1.0;
+const contentWidth = 320;
+const contentHeight = 240;
 
-// TODO: Style Image Choices
-
-// TODO: Default Content Image
+// TODO: Webcam Black and White?
 
 // TODO: Implement strength slider
+
+// TODO: Half Tone Comic book CSS?
 
 // TODO: Fix imports
 
@@ -41,6 +43,15 @@ let stylizedWebcamFrames = [];
 let currentFrame = 0;
 let frameCount = 0;
 let time = 0;
+
+/**
+ * This function updates the style image.
+ */
+function onSelectStyleClick(element) {
+  console.log('onSelectStyleClick');
+  console.log(element.value);
+  styleImage.src = element.value;
+}
 
 /**
  * This function resets variables and starts the draw loop.
@@ -119,6 +130,10 @@ function onPlayStopToggle() {
  * Loads the style transfer model.
  */
 function preload() {
+  styleImage.width = contentWidth;
+  styleImage.height = contentHeight;
+  stylizedCanvas.width = contentWidth;
+  stylizedCanvas.height = contentHeight;
   model.initialize().then(() => {
     console.log('Model is Ready');
     modelReady = true;
@@ -150,12 +165,12 @@ function setup() {
   video = createCapture(VIDEO, () => {
     videoReady = true;
     console.log('Video is Ready');
-    video.size(320, 240);
+    video.size(contentWidth, contentHeight);
     video.parent('p5-video-container');
     contentSpinner.style.display = 'none';
     video.style('display', 'none');
   });
-  p5Canvas = createCanvas(320, 240);
+  p5Canvas = createCanvas(contentWidth, contentHeight);
   p5Canvas.parent('p5-canvas-container');
   background(0);
   frameRate(framesPerSecondToDraw);
