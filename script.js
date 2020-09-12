@@ -80,24 +80,44 @@ function onAnimationLoopClick() {
  */
 function onWebcamLoopClick() {
   console.log('onWebcamLoopClick');
+  stylizedSpinner.style.display = 'block';
   if (modelReady && videoReady) {
-    video.show();
-    p5Canvas.show();
-    isWebcam = true;
-    isAnimation = false;
-    isPlaying = true;
-    stylizedWebcamFramesReady = false;
-    webcamFrames = [];
-    stylizedWebcamFrames = [];
-    frameCount = 0;
-    // Indicate that we will begin processing the images
-    modelStatus.classList.remove('loaded');
-    modelStatus.classList.add('loading');
-    modelStatus.innerHTML = 'Processing';
-    stylizedSpinner.style.display = 'block';
-    playStopButton.innerHTML = 'Stop';
-    loop();
+    createWebcamLoop();
+    return;
   }
+  if (!videoReady) {
+    contentSpinner.style.display = 'block';
+    video = createCapture(VIDEO, () => {
+      videoReady = true;
+      console.log('Video is Ready');
+      video.size(contentWidth, contentHeight);
+      video.parent('p5-video-container');
+      contentSpinner.style.display = 'none';
+      video.style('display', 'none');
+      if (modelReady) {
+        createWebcamLoop();
+      }
+    });
+  }
+}
+
+function createWebcamLoop() {
+  video.show();
+  p5Canvas.show();
+  isWebcam = true;
+  isAnimation = false;
+  isPlaying = true;
+  stylizedWebcamFramesReady = false;
+  webcamFrames = [];
+  stylizedWebcamFrames = [];
+  frameCount = 0;
+  // Indicate that we will begin processing the images
+  modelStatus.classList.remove('loaded');
+  modelStatus.classList.add('loading');
+  modelStatus.innerHTML = 'Processing';
+  stylizedSpinner.style.display = 'block';
+  playStopButton.innerHTML = 'Stop';
+  loop();
 }
 
 /**
@@ -156,20 +176,10 @@ function preload() {
 }
 
 /**
- * This creates the video canvas and webcam.
+ * This creates the p5 canvas and webcam.
  * It runs immediately after the preload function.
  */
 function setup() {
-  contentSpinner.style.display = 'block';
-  stylizedSpinner.style.display = 'block';
-  video = createCapture(VIDEO, () => {
-    videoReady = true;
-    console.log('Video is Ready');
-    video.size(contentWidth, contentHeight);
-    video.parent('p5-video-container');
-    contentSpinner.style.display = 'none';
-    video.style('display', 'none');
-  });
   p5Canvas = createCanvas(contentWidth, contentHeight);
   p5Canvas.parent('p5-canvas-container');
   background(0);

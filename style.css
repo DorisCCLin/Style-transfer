@@ -4,6 +4,7 @@ body {
   font-family: neue-kabel, sans-serif;
   font-weight: 400;
   font-style: normal;
+  margin: 0;
 }
 
 /* img {
@@ -16,6 +17,7 @@ canvas {
 
 video {
   border-radius: 30px;
+  display: none;
 }
 
 button {
@@ -45,6 +47,7 @@ button {
   column-gap: 1em;
   row-gap: 1em;
   padding: 0.5em;
+  height: calc(100vh - 1em);
 }
 
 .box {
