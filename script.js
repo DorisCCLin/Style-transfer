@@ -1,11 +1,12 @@
 const model = new mi.ArbitraryStyleTransferNetwork();
-const playStopButton = document.getElementById('play-stop-button');
-const modelStatus = document.getElementById('status');
-const stylizedCanvas = document.getElementById('stylized-canvas');
-const stylizedCanvasContext = stylizedCanvas.getContext('2d');
-const styleImage = document.getElementById('style-image');
-const contentSpinner = document.getElementById('content-spinner');
-const stylizedSpinner = document.getElementById('stylized-spinner');
+const playStopButton = document.getElementById("play-stop-button");
+const modelStatus = document.getElementById("status");
+const stylizedCanvas = document.getElementById("stylized-canvas");
+const stylizedCanvasContext = stylizedCanvas.getContext("2d");
+const styleImage = document.getElementById("style-image");
+const contentSpinner = document.getElementById("content-spinner");
+const stylizedSpinner = document.getElementById("stylized-spinner");
+const contentVideo = document.getElementById("p5-canvas-container");
 
 // Change these variables for different animation length and speeds
 const framesPerSecondToDraw = 12;
@@ -46,7 +47,7 @@ let time = 0;
  * This function resets variables and starts the draw loop.
  */
 function onAnimationLoopClick() {
-  console.log('onAnimationLoopClick');
+  console.log("onAnimationLoopClick");
   if (modelReady) {
     // video.show();
     p5Canvas.show();
@@ -55,11 +56,11 @@ function onAnimationLoopClick() {
     isPlaying = true;
     frameCount = 0;
     // Indicate that we will begin processing the images
-    modelStatus.classList.add('loaded');
-    modelStatus.classList.remove('loading');
-    modelStatus.innerHTML = 'Processing';
-    stylizedSpinner.style.display = 'block';
-    playStopButton.innerHTML = 'Stop';
+    modelStatus.classList.add("loaded");
+    modelStatus.classList.remove("loading");
+    modelStatus.innerHTML = "Processing";
+    stylizedSpinner.style.display = "block";
+    playStopButton.innerHTML = "Stop";
     loop();
   }
 }
@@ -68,7 +69,7 @@ function onAnimationLoopClick() {
  * This function resets variables and starts the draw loop.
  */
 function onWebcamLoopClick() {
-  console.log('onWebcamLoopClick');
+  console.log("onWebcamLoopClick");
   if (modelReady && videoReady) {
     video.show();
     p5Canvas.show();
@@ -80,11 +81,11 @@ function onWebcamLoopClick() {
     stylizedWebcamFrames = [];
     frameCount = 0;
     // Indicate that we will begin processing the images
-    modelStatus.classList.remove('loaded');
-    modelStatus.classList.add('loading');
-    modelStatus.innerHTML = 'Processing';
-    stylizedSpinner.style.display = 'block';
-    playStopButton.innerHTML = 'Stop';
+    modelStatus.classList.remove("loaded");
+    modelStatus.classList.add("loading");
+    modelStatus.innerHTML = "Processing";
+    stylizedSpinner.style.display = "block";
+    playStopButton.innerHTML = "Stop";
     loop();
   }
 }
@@ -101,15 +102,15 @@ function onPlayStopToggle() {
     return;
   }
   if (isPlaying) {
-    console.log('Stop Pressed');
-    modelStatus.innerHTML = 'Ready';
-    playStopButton.innerHTML = 'Play';
+    console.log("Stop Pressed");
+    modelStatus.innerHTML = "Ready";
+    playStopButton.innerHTML = "Play";
     noLoop();
     isPlaying = false;
   } else {
-    console.log('Play Pressed');
-    modelStatus.innerHTML = 'Looping';
-    playStopButton.innerHTML = 'Stop';
+    console.log("Play Pressed");
+    modelStatus.innerHTML = "Looping";
+    playStopButton.innerHTML = "Stop";
     loop();
     isPlaying = true;
   }
@@ -120,18 +121,18 @@ function onPlayStopToggle() {
  */
 function preload() {
   model.initialize().then(() => {
-    console.log('Model is Ready');
+    console.log("Model is Ready");
     modelReady = true;
-    modelStatus.classList.remove('loading');
-    modelStatus.classList.add('loaded');
-    modelStatus.innerHTML = 'Ready';
-    stylizedSpinner.style.display = 'none';
+    modelStatus.classList.remove("loading");
+    modelStatus.classList.add("loaded");
+    modelStatus.innerHTML = "Ready";
+    stylizedSpinner.style.display = "none";
   });
   for (let i = 0; i < 5; i += 1) {
     animationFrames[i] = createImg(
       `images/WashingDishesHandLoop${i}.jpg`,
       `Dish washing Animation Frame ${i}`,
-      'anonymous',
+      "anonymous",
       () => {
         image(animationFrames[i], 0, 0);
       }
@@ -145,18 +146,20 @@ function preload() {
  * It runs immediately after the preload function.
  */
 function setup() {
-  contentSpinner.style.display = 'block';
-  stylizedSpinner.style.display = 'block';
+  contentVideo.style.display = "none";
+  contentSpinner.style.display = "block";
+  stylizedSpinner.style.display = "block";
   video = createCapture(VIDEO, () => {
     videoReady = true;
-    console.log('Video is Ready');
+    console.log("Video is Ready");
     video.size(320, 240);
-    video.parent('p5-video-container');
-    contentSpinner.style.display = 'none';
-    video.style('display', 'none');
+    video.parent("p5-video-container");
+    contentSpinner.style.display = "none";
+    contentVideo.style.display = "block";
+    video.style("display", "none");
   });
   p5Canvas = createCanvas(320, 240);
-  p5Canvas.parent('p5-canvas-container');
+  p5Canvas.parent("p5-canvas-container");
   background(0);
   frameRate(framesPerSecondToDraw);
   noLoop();
@@ -168,7 +171,7 @@ function setup() {
  * framesPerSecondToDraw variable.
  */
 function draw() {
-  console.log('Looping');
+  console.log("Looping");
 
   // Increase time
   time += 1;
@@ -188,7 +191,7 @@ function draw() {
 
     // Render styled animation frame to style canvas
     if (currentFrame < stylizedAnimationFrames.length) {
-      stylizedSpinner.style.display = 'none';
+      stylizedSpinner.style.display = "none";
       stylizedCanvasContext.putImageData(
         stylizedAnimationFrames[currentFrame],
         0,
@@ -209,9 +212,9 @@ function draw() {
           stylizedAnimationFrames.push(imageData);
           if (stylizedAnimationFrames.length === animationFrames.length) {
             stylizedAnimationFramesReady = true;
-            modelStatus.classList.remove('loading');
-            modelStatus.classList.add('loaded');
-            modelStatus.innerHTML = 'Looping';
+            modelStatus.classList.remove("loading");
+            modelStatus.classList.add("loaded");
+            modelStatus.innerHTML = "Looping";
           }
         });
       });
@@ -232,7 +235,7 @@ function draw() {
 
     // Render styled webcam frame to style canvas
     if (currentFrame < stylizedWebcamFrames.length) {
-      stylizedSpinner.style.display = 'none';
+      stylizedSpinner.style.display = "none";
       stylizedCanvasContext.putImageData(
         stylizedWebcamFrames[currentFrame],
         0,
@@ -248,10 +251,10 @@ function draw() {
         // add imageData to styleFrames array
         stylizedWebcamFrames.push(imageData);
         if (stylizedWebcamFrames.length === maxFramesInLoop) {
-          modelStatus.classList.remove('loading');
-          modelStatus.classList.add('loaded');
-          modelStatus.innerHTML = 'Looping';
-          video.style('display', 'none');
+          modelStatus.classList.remove("loading");
+          modelStatus.classList.add("loaded");
+          modelStatus.innerHTML = "Looping";
+          video.style("display", "none");
           stylizedWebcamFramesReady = true;
         }
       });
