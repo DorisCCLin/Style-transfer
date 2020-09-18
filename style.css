@@ -36,10 +36,6 @@ button {
   border-radius: 5px;
 }
 
-.grey {
-  /* filter: grayscale(100%); */
-}
-
 .outer-grid-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -122,9 +118,6 @@ button {
   grid-row-end: 4;
   background-color: black;
   border-radius: 30px;
-}
-
-.card-status {
 }
 
 .spinner {

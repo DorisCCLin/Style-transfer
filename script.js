@@ -1,11 +1,12 @@
 const model = new mi.ArbitraryStyleTransferNetwork();
-const playStopButton = document.getElementById('play-stop-button');
 const modelStatus = document.getElementById('status');
 const stylizedCanvas = document.getElementById('stylized-canvas');
 const stylizedCanvasContext = stylizedCanvas.getContext('2d');
 const styleImage = document.getElementById('style-image');
 const contentSpinner = document.getElementById('content-spinner');
 const stylizedSpinner = document.getElementById('stylized-spinner');
+const playStopButton = document.getElementById('play-stop-button');
+const buttons = document.getElementsByTagName('button');
 
 // Change these variables for different animation length and speeds
 const framesPerSecondToDraw = 12;
@@ -34,23 +35,27 @@ let isAnimation = true;
 let modelReady = false;
 let videoReady = false;
 let animationReady = false;
-let stylizedAnimationFramesReady = false;
 let stylizedWebcamFramesReady = false;
 let animationFrames = [];
-let stylizedAnimationFrames = [];
+let stylizedAnimationFrames = {
+  style1: [],
+  style2: [],
+  style3: [],
+};
 let webcamFrames = [];
 let stylizedWebcamFrames = [];
 let currentFrame = 0;
 let frameCount = 0;
 let time = 0;
+let styleOption = 'style1';
 
 /**
  * This function updates the style image.
  */
 function onSelectStyleClick(element) {
   console.log('onSelectStyleClick');
-  console.log(element.value);
   styleImage.src = element.value;
+  styleOption = element.name;
 }
 
 /**
@@ -125,7 +130,7 @@ function createWebcamLoop() {
  *
  */
 function onPlayStopToggle() {
-  if (isAnimation && !stylizedAnimationFramesReady) {
+  if (isAnimation && stylizedAnimationFrames[styleOption].length === 0) {
     return;
   }
   if (isWebcam && !stylizedWebcamFramesReady) {
@@ -154,6 +159,10 @@ function preload() {
   styleImage.height = contentHeight;
   stylizedCanvas.width = contentWidth;
   stylizedCanvas.height = contentHeight;
+  stylizedSpinner.style.display = 'block';
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].disabled = true;
+  }
   model.initialize().then(() => {
     console.log('Model is Ready');
     modelReady = true;
@@ -161,11 +170,14 @@ function preload() {
     modelStatus.classList.add('loaded');
     modelStatus.innerHTML = 'Ready';
     stylizedSpinner.style.display = 'none';
+    for (let i = 0; i < buttons.length; i++) {
+      buttons[i].disabled = false;
+    }
   });
-  for (let i = 0; i < 5; i += 1) {
+  for (let i = 0; i < 3; i += 1) {
     animationFrames[i] = createImg(
-      `images/WashingDishesHandLoop${i}.jpg`,
-      `Dish washing Animation Frame ${i}`,
+      `images/defunctcommercials${i}.jpg`,
+      `Dancing Animation Frame ${i}`,
       'anonymous',
       () => {
         image(animationFrames[i], 0, 0);
@@ -212,10 +224,10 @@ function draw() {
     }
 
     // Render styled animation frame to style canvas
-    if (currentFrame < stylizedAnimationFrames.length) {
+    if (currentFrame < stylizedAnimationFrames[styleOption].length) {
       stylizedSpinner.style.display = 'none';
       stylizedCanvasContext.putImageData(
-        stylizedAnimationFrames[currentFrame],
+        stylizedAnimationFrames[styleOption][currentFrame],
         0,
         0
       );
@@ -225,15 +237,17 @@ function draw() {
     if (
       modelReady &&
       animationFrames.length > 0 &&
-      !stylizedAnimationFramesReady
+      stylizedAnimationFrames[styleOption].length === 0
     ) {
       animationFrames.forEach((image) => {
         model.stylize(image.elt, styleImage).then((imageData) => {
           // When style transfer complete (which happens asynchronously)
           // add imageData to styleFrames array
-          stylizedAnimationFrames.push(imageData);
-          if (stylizedAnimationFrames.length === animationFrames.length) {
-            stylizedAnimationFramesReady = true;
+          stylizedAnimationFrames[styleOption].push(imageData);
+          if (
+            stylizedAnimationFrames[styleOption].length ===
+            animationFrames.length
+          ) {
             modelStatus.classList.remove('loading');
             modelStatus.classList.add('loaded');
             modelStatus.innerHTML = 'Looping';

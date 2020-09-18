@@ -12,41 +12,41 @@
     <div class="outer-grid-container">
       <div class="box header-box">
         <div class="card-grid-container">
-          <div class="card card-title">Found Footage Remixer</div>
+          <div class="card card-title">Comic Strip Generator</div>
           <div id="status" class="card card-status loading">Loading</div>
         </div>
       </div>
       <!-- <div class="loader"></div> -->
       <div class="box style-box">
         <div class="card-grid-container">
-          <div class="card card-title">Select 8mm Archive Photo</div>
+          <div class="card card-title">Select 1960's Image</div>
           <div class="card card-button-panel">
             <button
-              name="option1"
+              name="style1"
               type="button"
               value="images/style320x220.jpg"
               class="button"
               onclick="onSelectStyleClick(this)"
             >
-              Option 1
+              Style 1
             </button>
             <button
-              name="option2"
+              name="style2"
               type="button"
-              value="images/WashingDishesHandLoop0.jpg"
+              value="images/WashingDishesHand.jpg"
               class="button"
               onclick="onSelectStyleClick(this)"
             >
-              Option 2
+              Style 2
             </button>
             <button
-              name="option3"
+              name="style3"
               type="button"
-              value="images/WashingDishesHandLoop3.jpg"
+              value="images/ponytail.jpg"
               class="button"
               onclick="onSelectStyleClick(this)"
             >
-              Option 3
+              Style 3
             </button>
           </div>
           <div class="card card-content">
@@ -64,12 +64,20 @@
       </div>
       <div class="box content-box">
         <div class="card-grid-container">
-          <div class="card card-title">Select Content to be Remixed</div>
+          <div class="card card-title">Select Content to be Styled</div>
           <div class="card card-button-panel">
-            <button class="button" onclick="onAnimationLoopClick()">
+            <button
+              id="animation-button"
+              class="button"
+              onclick="onAnimationLoopClick()"
+            >
               Animation
             </button>
-            <button class="button" onclick="onWebcamLoopClick()">
+            <button
+              id="webcam-button"
+              class="button"
+              onclick="onWebcamLoopClick()"
+            >
               Use Webcam
             </button>
             <button
@@ -93,7 +101,7 @@
       </div>
       <div class="box output-box">
         <div class="card-grid-container">
-          <div class="card card-title">Remixed Output</div>
+          <div class="card card-title">Comic Strip Style Output</div>
           <div id="stylized-canvas-container" class="card card-content flip">
             <canvas id="stylized-canvas" width="320" height="240"></canvas>
           </div>
