@@ -172,7 +172,7 @@ button {
   vertical-align: bottom;
   -webkit-animation: ellipsis steps(4, end) 900ms infinite;
   animation: ellipsis steps(4, end) 900ms infinite;
-  content: "\2026"; /* ascii code for the ellipsis character */
+  content: '\2026'; /* ascii code for the ellipsis character */
 }
 
 @keyframes ellipsis {
@@ -206,19 +206,23 @@ button {
 }
 
 /* The Close Button */
-.close {
+.closeBtn {
   color: #aaaaaa;
   float: right;
-  font-size: 28px;
+  font-size: 1.5em;
   font-weight: bold;
-  padding: 5px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 2px solid #aaaaaa;
+  border-radius: 5px;
 }
 
-.close:hover,
-.close:focus {
-  color: #000;
+.closeBtn:hover,
+.closeBtn:focus {
+  color: orange;
   text-decoration: none;
   cursor: pointer;
+  border: 2px solid orange !important;
 }
 
 #openBtn {
