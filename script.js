@@ -31,11 +31,10 @@ let p5Canvas;
 let video;
 let isPlaying = false;
 let isWebcam = false;
-let isAnimation = true;
+let isAnimation = false;
 let modelReady = false;
 let videoReady = false;
 let animationReady = false;
-let stylizedWebcamFramesReady = false;
 let animationFrames = [];
 let stylizedAnimationFrames = {
   style1: [],
@@ -43,7 +42,12 @@ let stylizedAnimationFrames = {
   style3: [],
 };
 let webcamFrames = [];
-let stylizedWebcamFrames = [];
+// let stylizedWebcamFrames = [];
+let stylizedWebcamFrames = {
+  style1: [],
+  style2: [],
+  style3: [],
+};
 let currentFrame = 0;
 let frameCount = 0;
 let time = 0;
@@ -56,6 +60,14 @@ function onSelectStyleClick(element) {
   console.log('onSelectStyleClick');
   styleImage.src = element.value;
   styleOption = element.name;
+  if (isWebcam && modelReady && videoReady) {
+    stylizedSpinner.style.display = 'block';
+    createWebcamLoop();
+    return;
+  }
+  if (isAnimation && stylizedAnimationFrames[styleOption].length === 0) {
+    stylizedSpinner.style.display = 'block';
+  }
 }
 
 /**
@@ -64,7 +76,6 @@ function onSelectStyleClick(element) {
 function onAnimationLoopClick() {
   console.log('onAnimationLoopClick');
   if (modelReady) {
-    // video.show();
     p5Canvas.show();
     isAnimation = true;
     isWebcam = false;
@@ -86,6 +97,8 @@ function onAnimationLoopClick() {
 function onWebcamLoopClick() {
   console.log('onWebcamLoopClick');
   stylizedSpinner.style.display = 'block';
+  // webcamFrames = [];
+  // stylizedWebcamFrames[styleOption] = [];
   if (modelReady && videoReady) {
     createWebcamLoop();
     return;
@@ -112,9 +125,8 @@ function createWebcamLoop() {
   isWebcam = true;
   isAnimation = false;
   isPlaying = true;
-  stylizedWebcamFramesReady = false;
   webcamFrames = [];
-  stylizedWebcamFrames = [];
+  stylizedWebcamFrames[styleOption] = [];
   frameCount = 0;
   // Indicate that we will begin processing the images
   modelStatus.classList.remove('loaded');
@@ -133,7 +145,7 @@ function onPlayStopToggle() {
   if (isAnimation && stylizedAnimationFrames[styleOption].length === 0) {
     return;
   }
-  if (isWebcam && !stylizedWebcamFramesReady) {
+  if (isWebcam && stylizedWebcamFrames[styleOption].length === 0) {
     return;
   }
   if (isPlaying) {
@@ -251,6 +263,7 @@ function draw() {
             modelStatus.classList.remove('loading');
             modelStatus.classList.add('loaded');
             modelStatus.innerHTML = 'Looping';
+            stylizedSpinner.style.display = 'none';
           }
         });
       });
@@ -270,10 +283,10 @@ function draw() {
     }
 
     // Render styled webcam frame to style canvas
-    if (currentFrame < stylizedWebcamFrames.length) {
+    if (currentFrame < stylizedWebcamFrames[styleOption].length) {
       stylizedSpinner.style.display = 'none';
       stylizedCanvasContext.putImageData(
-        stylizedWebcamFrames[currentFrame],
+        stylizedWebcamFrames[styleOption][currentFrame],
         0,
         0
       );
@@ -285,13 +298,12 @@ function draw() {
       model.stylize(video.elt, styleImage).then((imageData) => {
         // When style transfer complete (which happens asynchronously)
         // add imageData to styleFrames array
-        stylizedWebcamFrames.push(imageData);
-        if (stylizedWebcamFrames.length === maxFramesInLoop) {
+        stylizedWebcamFrames[styleOption].push(imageData);
+        if (stylizedWebcamFrames[styleOption].length === maxFramesInLoop) {
           modelStatus.classList.remove('loading');
           modelStatus.classList.add('loaded');
           modelStatus.innerHTML = 'Looping';
           video.style('display', 'none');
-          stylizedWebcamFramesReady = true;
         }
       });
       frameCount += 1;
