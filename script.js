@@ -1,12 +1,12 @@
 const model = new mi.ArbitraryStyleTransferNetwork();
-const modelStatus = document.getElementById("status");
-const stylizedCanvas = document.getElementById("stylized-canvas");
-const stylizedCanvasContext = stylizedCanvas.getContext("2d");
-const styleImage = document.getElementById("style-image");
-const contentSpinner = document.getElementById("content-spinner");
-const stylizedSpinner = document.getElementById("stylized-spinner");
-const playStopButton = document.getElementById("play-stop-button");
-const buttons = document.getElementsByTagName("button");
+const modelStatus = document.getElementById('status');
+const stylizedCanvas = document.getElementById('stylized-canvas');
+const stylizedCanvasContext = stylizedCanvas.getContext('2d');
+const styleImage = document.getElementById('style-image');
+const contentSpinner = document.getElementById('content-spinner');
+const stylizedSpinner = document.getElementById('stylized-spinner');
+const playStopButton = document.getElementById('play-stop-button');
+const buttons = document.getElementsByTagName('button');
 
 // Change these variables for different animation length and speeds
 const framesPerSecondToDraw = 12;
@@ -47,34 +47,34 @@ let stylizedWebcamFrames = [];
 let currentFrame = 0;
 let frameCount = 0;
 let time = 0;
-let styleOption = "style1";
+let styleOption = 'style1';
 
 /**
  Modal section 
  */
 // Get the modal
-var modal = document.getElementById("infoModal");
+var modal = document.getElementById('infoModal');
 
 // Get the button that opens the modal
-var btn = document.getElementById("openBtn");
+var btn = document.getElementById('openBtn');
 
 // Get the <span> element that closes the modal
-var span = document.getElementsByClassName("closeBtn")[0];
+var span = document.getElementsByClassName('closeBtn')[0];
 
 // When the user clicks on the button, open the modal
 btn.onclick = function () {
-  modal.style.display = "block";
+  modal.style.display = 'block';
 };
 
 // When the user clicks on <span> (x), close the modal
 span.onclick = function () {
-  modal.style.display = "none";
+  modal.style.display = 'none';
 };
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function (event) {
   if (event.target == modal) {
-    modal.style.display = "none";
+    modal.style.display = 'none';
   }
 };
 
@@ -82,7 +82,7 @@ window.onclick = function (event) {
  * This function updates the style image.
  */
 function onSelectStyleClick(element) {
-  console.log("onSelectStyleClick");
+  console.log('onSelectStyleClick');
   styleImage.src = element.value;
   styleOption = element.name;
 }
@@ -91,7 +91,7 @@ function onSelectStyleClick(element) {
  * This function resets variables and starts the draw loop.
  */
 function onAnimationLoopClick() {
-  console.log("onAnimationLoopClick");
+  console.log('onAnimationLoopClick');
   if (modelReady) {
     // video.show();
     p5Canvas.show();
@@ -100,11 +100,11 @@ function onAnimationLoopClick() {
     isPlaying = true;
     frameCount = 0;
     // Indicate that we will begin processing the images
-    modelStatus.classList.add("loaded");
-    modelStatus.classList.remove("loading");
-    modelStatus.innerHTML = "Processing";
-    stylizedSpinner.style.display = "block";
-    playStopButton.innerHTML = "Stop";
+    modelStatus.classList.add('loaded');
+    modelStatus.classList.remove('loading');
+    modelStatus.innerHTML = 'Processing';
+    stylizedSpinner.style.display = 'block';
+    playStopButton.innerHTML = 'Stop';
     loop();
   }
 }
@@ -113,21 +113,21 @@ function onAnimationLoopClick() {
  * This function resets variables and starts the draw loop.
  */
 function onWebcamLoopClick() {
-  console.log("onWebcamLoopClick");
-  stylizedSpinner.style.display = "block";
+  console.log('onWebcamLoopClick');
+  stylizedSpinner.style.display = 'block';
   if (modelReady && videoReady) {
     createWebcamLoop();
     return;
   }
   if (!videoReady) {
-    contentSpinner.style.display = "block";
+    contentSpinner.style.display = 'block';
     video = createCapture(VIDEO, () => {
       videoReady = true;
-      console.log("Video is Ready");
+      console.log('Video is Ready');
       video.size(contentWidth, contentHeight);
-      video.parent("p5-video-container");
-      contentSpinner.style.display = "none";
-      video.style("display", "none");
+      video.parent('p5-video-container');
+      contentSpinner.style.display = 'none';
+      video.style('display', 'none');
       if (modelReady) {
         createWebcamLoop();
       }
@@ -146,11 +146,11 @@ function createWebcamLoop() {
   stylizedWebcamFrames = [];
   frameCount = 0;
   // Indicate that we will begin processing the images
-  modelStatus.classList.remove("loaded");
-  modelStatus.classList.add("loading");
-  modelStatus.innerHTML = "Processing";
-  stylizedSpinner.style.display = "block";
-  playStopButton.innerHTML = "Stop";
+  modelStatus.classList.remove('loaded');
+  modelStatus.classList.add('loading');
+  modelStatus.innerHTML = 'Processing';
+  stylizedSpinner.style.display = 'block';
+  playStopButton.innerHTML = 'Stop';
   loop();
 }
 
@@ -166,15 +166,15 @@ function onPlayStopToggle() {
     return;
   }
   if (isPlaying) {
-    console.log("Stop Pressed");
-    modelStatus.innerHTML = "Ready";
-    playStopButton.innerHTML = "Play";
+    console.log('Stop Pressed');
+    modelStatus.innerHTML = 'Ready';
+    playStopButton.innerHTML = 'Play';
     noLoop();
     isPlaying = false;
   } else {
-    console.log("Play Pressed");
-    modelStatus.innerHTML = "Looping";
-    playStopButton.innerHTML = "Stop";
+    console.log('Play Pressed');
+    modelStatus.innerHTML = 'Looping';
+    playStopButton.innerHTML = 'Stop';
     loop();
     isPlaying = true;
   }
@@ -188,17 +188,17 @@ function preload() {
   styleImage.height = contentHeight;
   stylizedCanvas.width = contentWidth;
   stylizedCanvas.height = contentHeight;
-  stylizedSpinner.style.display = "block";
+  stylizedSpinner.style.display = 'block';
   for (let i = 0; i < buttons.length; i++) {
     buttons[i].disabled = true;
   }
   model.initialize().then(() => {
-    console.log("Model is Ready");
+    console.log('Model is Ready');
     modelReady = true;
-    modelStatus.classList.remove("loading");
-    modelStatus.classList.add("loaded");
-    modelStatus.innerHTML = "Ready";
-    stylizedSpinner.style.display = "none";
+    modelStatus.classList.remove('loading');
+    modelStatus.classList.add('loaded');
+    modelStatus.innerHTML = 'Ready';
+    stylizedSpinner.style.display = 'none';
     for (let i = 0; i < buttons.length; i++) {
       buttons[i].disabled = false;
     }
@@ -207,7 +207,7 @@ function preload() {
     animationFrames[i] = createImg(
       `images/defunctcommercials${i}.jpg`,
       `Dancing Animation Frame ${i}`,
-      "anonymous",
+      'anonymous',
       () => {
         image(animationFrames[i], 0, 0);
       }
@@ -222,7 +222,7 @@ function preload() {
  */
 function setup() {
   p5Canvas = createCanvas(contentWidth, contentHeight);
-  p5Canvas.parent("p5-canvas-container");
+  p5Canvas.parent('p5-canvas-container');
   background(0);
   frameRate(framesPerSecondToDraw);
   noLoop();
@@ -234,7 +234,7 @@ function setup() {
  * framesPerSecondToDraw variable.
  */
 function draw() {
-  console.log("Looping");
+  console.log('Looping');
 
   // Increase time
   time += 1;
@@ -254,7 +254,7 @@ function draw() {
 
     // Render styled animation frame to style canvas
     if (currentFrame < stylizedAnimationFrames[styleOption].length) {
-      stylizedSpinner.style.display = "none";
+      stylizedSpinner.style.display = 'none';
       stylizedCanvasContext.putImageData(
         stylizedAnimationFrames[styleOption][currentFrame],
         0,
@@ -277,9 +277,9 @@ function draw() {
             stylizedAnimationFrames[styleOption].length ===
             animationFrames.length
           ) {
-            modelStatus.classList.remove("loading");
-            modelStatus.classList.add("loaded");
-            modelStatus.innerHTML = "Looping";
+            modelStatus.classList.remove('loading');
+            modelStatus.classList.add('loaded');
+            modelStatus.innerHTML = 'Looping';
           }
         });
       });
@@ -300,7 +300,7 @@ function draw() {
 
     // Render styled webcam frame to style canvas
     if (currentFrame < stylizedWebcamFrames.length) {
-      stylizedSpinner.style.display = "none";
+      stylizedSpinner.style.display = 'none';
       stylizedCanvasContext.putImageData(
         stylizedWebcamFrames[currentFrame],
         0,
@@ -316,10 +316,10 @@ function draw() {
         // add imageData to styleFrames array
         stylizedWebcamFrames.push(imageData);
         if (stylizedWebcamFrames.length === maxFramesInLoop) {
-          modelStatus.classList.remove("loading");
-          modelStatus.classList.add("loaded");
-          modelStatus.innerHTML = "Looping";
-          video.style("display", "none");
+          modelStatus.classList.remove('loading');
+          modelStatus.classList.add('loaded');
+          modelStatus.innerHTML = 'Looping';
+          video.style('display', 'none');
           stylizedWebcamFramesReady = true;
         }
       });
