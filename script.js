@@ -12,13 +12,9 @@ const buttons = document.getElementsByTagName('button');
 const framesPerSecondToDraw = 12;
 const waitTimeBeforeDrawingEachNewFrame = 3;
 const maxFramesInLoop = 3;
-const strength = 1.0;
 const contentWidth = 320;
 const contentHeight = 240;
-
-// TODO: Webcam Black and White?
-
-// TODO: Implement strength slider
+const loopTimeout = 1200;
 
 // TODO: Half Tone Comic book CSS?
 
@@ -31,10 +27,9 @@ let p5Canvas;
 let video;
 let isPlaying = false;
 let isWebcam = false;
-let isAnimation = false;
+let isAnimation = true;
 let modelReady = false;
 let videoReady = false;
-let animationReady = false;
 let animationFrames = [];
 let stylizedAnimationFrames = {
   style1: [],
@@ -52,6 +47,7 @@ let currentFrame = 0;
 let frameCount = 0;
 let time = 0;
 let styleOption = 'style1';
+let loopCount = 0;
 
 /**
  Modal section 
@@ -83,60 +79,71 @@ window.onclick = function (event) {
 };
 
 /**
- * This function updates the style image.
+ * This updates the style image.
  */
 function onSelectStyleClick(element) {
-  console.log('onSelectStyleClick');
+  // console.log('onSelectStyleClick');
   styleImage.src = element.value;
   styleOption = element.name;
-  if (isWebcam && modelReady && videoReady) {
-    stylizedSpinner.style.display = 'block';
+  if (!modelReady) {
+    return;
+  }
+  if (isWebcam && videoReady) {
     createWebcamLoop();
     return;
   }
-  if (isAnimation && stylizedAnimationFrames[styleOption].length === 0) {
-    stylizedSpinner.style.display = 'block';
+  if (isAnimation) {
+    createAnimationLoop();
   }
 }
 
 /**
- * This function resets variables and starts the draw loop.
+ * This begins looping for animation images.
  */
 function onAnimationLoopClick() {
-  console.log('onAnimationLoopClick');
+  // console.log('onAnimationLoopClick');
   if (modelReady) {
-    p5Canvas.show();
-    isAnimation = true;
-    isWebcam = false;
-    isPlaying = true;
-    frameCount = 0;
-    // Indicate that we will begin processing the images
-    modelStatus.classList.add('loaded');
-    modelStatus.classList.remove('loading');
-    modelStatus.innerHTML = 'Processing';
-    stylizedSpinner.style.display = 'block';
-    playStopButton.innerHTML = 'Stop';
-    loop();
+    createAnimationLoop();
   }
 }
 
 /**
- * This function resets variables and starts the draw loop.
+ * This sets up the main loop to play and stylize animation frames.
+ */
+function createAnimationLoop() {
+  p5Canvas.show();
+  isAnimation = true;
+  isWebcam = false;
+  isPlaying = true;
+  frameCount = 0;
+  playStopButton.innerHTML = 'Stop';
+  modelStatus.innerHTML = 'Looping';
+  if (stylizedAnimationFrames[styleOption].length === 0) {
+    // Indicate that we will begin processing the images
+    modelStatus.classList.remove('loaded');
+    modelStatus.classList.add('loading');
+    modelStatus.innerHTML = 'Processing';
+    stylizedSpinner.style.display = 'block';
+  }
+  loop();
+  loopCount = 0;
+}
+
+/**
+ * This begins looping for webcam images.
  */
 function onWebcamLoopClick() {
-  console.log('onWebcamLoopClick');
-  stylizedSpinner.style.display = 'block';
-  // webcamFrames = [];
-  // stylizedWebcamFrames[styleOption] = [];
+  // console.log('onWebcamLoopClick');
   if (modelReady && videoReady) {
     createWebcamLoop();
     return;
   }
+  // Create webcam video if its not ready
   if (!videoReady) {
     contentSpinner.style.display = 'block';
     video = createCapture(VIDEO, () => {
       videoReady = true;
-      console.log('Video is Ready');
+      console.log('Webcam video is Ready');
       video.size(contentWidth, contentHeight);
       video.parent('p5-video-container');
       contentSpinner.style.display = 'none';
@@ -148,6 +155,9 @@ function onWebcamLoopClick() {
   }
 }
 
+/**
+ * This sets up the main loop to play and stylize webcam frames.
+ */
 function createWebcamLoop() {
   video.show();
   p5Canvas.show();
@@ -164,10 +174,11 @@ function createWebcamLoop() {
   stylizedSpinner.style.display = 'block';
   playStopButton.innerHTML = 'Stop';
   loop();
+  loopCount = 0;
 }
 
 /**
- * This function plays or stops the loop.
+ * This plays or stops looping.
  *
  */
 function onPlayStopToggle() {
@@ -178,16 +189,18 @@ function onPlayStopToggle() {
     return;
   }
   if (isPlaying) {
-    console.log('Stop Pressed');
+    // console.log('Stop Pressed');
     modelStatus.innerHTML = 'Ready';
     playStopButton.innerHTML = 'Play';
     noLoop();
+    loopCount = 0;
     isPlaying = false;
   } else {
-    console.log('Play Pressed');
+    // console.log('Play Pressed');
     modelStatus.innerHTML = 'Looping';
     playStopButton.innerHTML = 'Stop';
     loop();
+    loopCount = 0;
     isPlaying = true;
   }
 }
@@ -201,6 +214,7 @@ function preload() {
   stylizedCanvas.width = contentWidth;
   stylizedCanvas.height = contentHeight;
   stylizedSpinner.style.display = 'block';
+  // Disable buttons until model is loaded
   for (let i = 0; i < buttons.length; i++) {
     buttons[i].disabled = true;
   }
@@ -211,6 +225,7 @@ function preload() {
     modelStatus.classList.add('loaded');
     modelStatus.innerHTML = 'Ready';
     stylizedSpinner.style.display = 'none';
+    // Enable all buttons
     for (let i = 0; i < buttons.length; i++) {
       buttons[i].disabled = false;
     }
@@ -229,7 +244,7 @@ function preload() {
 }
 
 /**
- * This creates the p5 canvas and webcam.
+ * This creates the p5 canvas.
  * It runs immediately after the preload function.
  */
 function setup() {
@@ -238,15 +253,29 @@ function setup() {
   background(0);
   frameRate(framesPerSecondToDraw);
   noLoop();
+  loopCount = 0;
 }
 
 /**
- * This function runs continuously as a loop.
- * The number of times it loops per second is determined by the
- * framesPerSecondToDraw variable.
+ * This function runs continuously as a loop. It displays the animation
+ * or webcam images, and their stylized counterparts.
+ * The framesPerSecondToDraw variable determines how many times it loops
+ * per second.
  */
 function draw() {
-  console.log('Looping');
+  loopCount += 1;
+  // console.log('Looping:', loopCount);
+
+  // This times out after loopTimeout is reached so the looping doesn't
+  // continue forever.
+  if (loopCount > loopTimeout) {
+    noLoop();
+    loopCount = 0;
+    isPlaying = false;
+    playStopButton.innerHTML = 'Play';
+    modelStatus.innerHTML = 'Ready';
+    return;
+  }
 
   // Increase time
   time += 1;
